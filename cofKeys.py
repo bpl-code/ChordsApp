@@ -2,8 +2,10 @@
 
 import Chords2
 
-cof = chords2.circleOfFifths()
+cof = Chords2.circleOfFifths()
 
 cof.buildKeys()
 
-cof.keys['A']
+key = cof.keySignitures['A']
+
+print(key.getChords())
