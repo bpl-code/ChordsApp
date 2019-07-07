@@ -35,6 +35,8 @@ class circleOfFifths():
             else:
                 newKey.scale.append(self.notes[interval])
 
+        #Edit for 
+
             
         return newKey
 
