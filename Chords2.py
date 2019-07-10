@@ -2,6 +2,15 @@
 # -*- coding: utf-8 -*-
 #A program that helps you write chord progressions and modulations
 
+class session():
+    def __init__(self):
+        self.circleOfFifths = ""
+
+    def sessionSetUp(self):
+        self.circleOfFifths = circleOfFifths()
+        self.circleOfFifths.buildKeys()
+        
+
 class circleOfFifths():
     def __init__(self):
         self.keyNames = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B']
@@ -42,22 +51,91 @@ class keys():
     def __init__(self, keyName, scale, chordSymbols=['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°']):
         self.keyName = keyName
         self.scale = scale
-        self.chordSymbols = chordSymbols
-        self.relativeMinor = scale[5]
-
-
-
-
+        self.keySymbols = chordSymbols
+        self.relativeMinor = scale[5] + 'm'
+        self.relativeMajor = scale[1]
+        self.chordSymbols = self.setChordSymbols()
+        self.chordNames = self.setChordNames()
 
     #Functions
+    def setChordSymbols(self):
+        chords = []
+        for i in range(7):
+            chords.append(self.scale[i] + self.keySymbols[i])
+        return chords
+
+    def setChordNames(self):
+        chordSymbols = self.getChordSymbols()
+        chords = []
+        for chord in chordSymbols:
+            if '°' in chord:
+                chords.append(chord[0] + 'dim')
+            elif chord[1] == '#':
+                if chord[2].islower():
+                    chords.append(chord[0] + '#m')
+                else:
+                    chords.append(chord[0]+'#M')
+            elif chord[1].islower():
+                chords.append(chord[0] + 'm')
+            else:
+                chords.append(chord[0]+'M')
+        return chords
+
+
+    #Get Functions
 
     def getScale(self):
         return self.scale
 
+    def getChordSymbols(self):
+        return self.chordSymbols
+
     def getChords(self):
-        chords = []
-        for i in range(7):
-            chords.append(self.scale[i] + self.chordSymbols[i])
-        return chords
+        return self.chordNames
+
+
 
     
+
+class chordSelector():
+    def __init__(self):
+        self.currentKey = ""
+        self.selectedChord = ""
+        self.previousKey = ""
+        self.directModKeys = ""
+
+
+    #usr select functions
+
+    def selectKey(self,circleOfFifths,key):
+        self.currentKey = circleOfFifths.keySignitures[key]
+
+    def selectChord(self,chordName):
+        self.selectedChord = chordName
+
+    #functions
+
+    def directMod(self, session):
+        directModKeys = {}
+        for key,val in session.circleOfFifths.keySignitures.items():
+            chords = val.chordNames
+            if self.selectedChord in chords:
+                directModKeys[key] = val
+        self.directModKeys = directModKeys
+
+        
+
+    #get functions
+
+    def getCurrentKey(self):
+        return self.currentKey
+
+    def getSelectedChord(self):
+        return self.selectedChord
+
+    def getDirectModKeys(self):
+        return self.directModKeys
+
+#Select chords
+
+#List chords that belong in other keys
