@@ -1,57 +1,146 @@
-#ChordsApp
+#Chords Alt Version
+# -*- coding: utf-8 -*-
 #A program that helps you write chord progressions and modulations
+
+class session():
+    def __init__(self):
+        self.circleOfFifths = ""
+
+    def sessionSetUp(self):
+        self.circleOfFifths = circleOfFifths()
+        self.circleOfFifths.buildKeys()
+        
 
 class circleOfFifths():
     def __init__(self):
-        self.notes = ['C',('C#','Db'),'D',('D#','Eb'),('E','Fb'),'F',('F#','Gb'),'G',('G#','Ab'),'A',('A#','Bb'),('B','Cb')]
-        self.keyNames = {'C' : 0 ,'G' : 7,'D' : 2 ,'A' : 9,'E' : 4,'B' : 11,'Gb' : 6, 'F#' : 6,'Db' : 1,'C#' : 1,'Ab': 8,'Eb' : 3,'Bb' : 10,'F' : 4}
-        self.majorIntervals = [2,2,1,2,2,2]
-        self.minorIntervals = [1,2,2,1,2,2]
-        self.keys = {}
+        self.keyNames = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B']
+        self.keyScales = {'C' : ['C', 'D', 'E', 'F', 'G', 'A', 'B'], 'C#' : ['C#', 'D#', 'E#', 'F#', 'G#', 'A#', 'B#'],\
+        'Db' : ['Db', 'Eb', 'F', 'Gb', 'Ab', 'Bb', 'C'], 'D' : ['D', 'E', 'F#', 'G', 'A', 'B', 'C#'],\
+        'D#' : ['D#', 'E#', 'F##', 'G#', 'A#', 'B#', 'C##'],\
+        'Eb' : ['Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'D'], 'E' : ['E', 'F#', 'G#', 'A', 'B', 'C#', 'D#'],\
+        'F' : ['F', 'G', 'A', 'Bb', 'C', 'D', 'E'], 'F#' : ['F#', 'G#', 'A#', 'B', 'C#', 'D#', 'E#'],\
+        'Gb' : ['Gb', 'Ab', 'Bb', 'Cb', 'Db', 'Eb', 'F', 'Gb'], 'G' : ['G', 'A','B', 'C', 'D', 'E', 'F#'],\
+        'G#' : ['G#', 'A#', 'B#', 'C#', 'D#', 'E#', 'F##'], 'Ab' : ['Ab', 'Bb', 'C', 'Db', 'Eb', 'F', 'G'],\
+        'A' : ['A', 'B', 'C#', 'D', 'E', 'F#', 'G#'], 'A#' : ['A#', 'B#', 'C##', 'D#', 'E#', 'F##', 'G##'],\
+        'Bb' : ['Bb', 'C', 'D', 'Eb', 'F', 'G', 'A'], 'B' : ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#']}
+        self.keySignitures = {}
 
-
-    def initialise(self):
-        #Builds the key
-        pass
-     
-
-    def buildKeys(self, keyName):
+    def buildKeys(self):
         #Create key object
-        newKey = keys(keyName)
-        root = self.keyNames[keyName]
-        interval = root
+        for key in self.keyNames:
+            self.keySignitures[key] = keys(key, self.keyScales[key])
 
-        #If key is major
-        for i in range(6):
-            interval += self.majorIntervals[i]
-            if interval >= 12:
-                interval = interval - 12
-            #Chooses the enharmonic relevant to the key
-            if type(self.notes[interval]) == tuple:
-                if 'b' in keyName or keyName == 'F':
-                    newKey.scale.append(self.notes[interval][1])
-                else:
-                    newKey.scale.append(self.notes[interval][0])
-            else:
-                newKey.scale.append(self.notes[interval])
+        #Build Minor Keys
+        for key in self.keyNames: 
+            scale = self.keyScales[key]
+            minorScale = [] 
+            minorKeyName = scale[5] + 'm'
+            for i in range(7):
+                interval = 5 + i
+                if interval > 6:
+                    interval -= 7
+                minorScale.append(scale[interval])
+            self.keySignitures[minorKeyName] = keys(minorKeyName, minorScale, chordSymbols=['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII'])
 
-        #Edit for 
+    def getKey(self, keyName):
+        return self.keySignitures[keyName]
 
-            
-        return newKey
 
 
 class keys():
-    def __init__(self, keyName):
+    def __init__(self, keyName, scale, chordSymbols=['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°']):
         self.keyName = keyName
-        self.chords = {}
-        self.scale = [keyName]
+        self.scale = scale
+        self.keySymbols = chordSymbols
+        self.relativeMinor = scale[5] + 'm'
+        self.relativeMajor = scale[1]
+        self.chordSymbols = self.setChordSymbols()
+        self.chordNames = self.setChordNames()
+
+    #Functions
+    def setChordSymbols(self):
+        chords = []
+        for i in range(7):
+            chords.append(self.scale[i] + self.keySymbols[i])
+        return chords
+
+    def setChordNames(self):
+        chordSymbols = self.getChordSymbols()
+        chords = []
+        for chord in chordSymbols:
+            if '°' in chord:
+                chords.append(chord[0] + 'dim')
+            elif chord[1] == '#':
+                if chord[2].islower():
+                    chords.append(chord[0] + '#m')
+                else:
+                    chords.append(chord[0]+'#M')
+            elif chord[1].islower():
+                chords.append(chord[0] + 'm')
+            else:
+                chords.append(chord[0]+'M')
+        return chords
+
+
+    #Get Functions
 
     def getScale(self):
         return self.scale
 
+    def getChordSymbols(self):
+        return self.chordSymbols
+
+    def getChords(self):
+        return self.chordNames
+
+
+
+    
+
+class chordSelector():
+    def __init__(self, session):
+        self.session = session
+        self.currentKey = None
+        self.selectedChord = None
+        self.previousKey = None
+        self.directModKeys = None
+
+
+    #usr select functions
+
+    def selectKey(self,key):
+        self.previousKey = self.currentKey
+        self.currentKey = self.session.circleOfFifths.keySignitures[key]
+        self.selectedChord = None
+        self.directModKeys = None
+
+    def selectChord(self,chordName):
+        self.selectedChord = chordName
+        self.directMod()
+
+    #functions
+
+    def directMod(self):
+        directModKeys = {}
+        for key,val in self.session.circleOfFifths.keySignitures.items():
+            chords = val.chordNames
+            if self.selectedChord in chords:
+                directModKeys[key] = val
+        self.directModKeys = directModKeys
+
         
 
+    #get functions
 
-            
+    def getCurrentKey(self):
+        return self.currentKey
 
+    def getSelectedChord(self):
+        return self.selectedChord
+
+    def getDirectModKeys(self):
+        return self.directModKeys
+
+#Select chords
+
+#List chords that belong in other keys
