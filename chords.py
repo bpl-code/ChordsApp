@@ -102,33 +102,54 @@ class chordSelector():
         self.session = session
         self.currentKey = None
         self.selectedChord = None
-        self.previousKey = None
-        self.directModKeys = None
-
+        self.previousKeys = []
+        self.pivotModKeys = None
 
     #usr select functions
-
+    
     def selectKey(self,key):
-        self.previousKey = self.currentKey
+        self.manageKeyMemory()
         self.currentKey = self.session.circleOfFifths.keySignitures[key]
         self.selectedChord = None
-        self.directModKeys = None
+        self.pivotModKeys = None
 
     def selectChord(self,chordName):
         self.selectedChord = chordName
-        self.directMod()
-
+ 
     #functions
 
-    def directMod(self):
-        directModKeys = {}
+    def manageKeyMemory(self):
+        if self.previousKeys == 5:
+            tempList = []
+            for i in range(1,6):
+                tempList.append(self.previousKeys[i])
+                tempList.append(self.currentKey)
+                self.previousKeys = tempList
+            else:
+                self.previousKeys.append(self.currentKey)
+
+    def pivotMod(self):
+        self.pivotModKeys = {}
         for key,val in self.session.circleOfFifths.keySignitures.items():
             chords = val.chordNames
             if self.selectedChord in chords:
-                directModKeys[key] = val
-        self.directModKeys = directModKeys
+        self.pivotModKeys[key] = val
+        self.pivotModKeys self.pivotModKeys  
 
-        
+    def parallelMod(self):
+        # Parrallel keys are major scales and a minor scales that have the same tonic
+        pass
+
+    def truckDriverMod(self):
+        #show the dominent chord of the key that is a step above the current key
+        pass
+
+    def alteredCommonMod(self):
+        #This is when two keys share the same root note of a chord, but the quality is different.
+        pass
+    def setUpMod(self):
+        #Step up either a half step or full step
+        pass
 
     #get functions
 
@@ -138,9 +159,25 @@ class chordSelector():
     def getSelectedChord(self):
         return self.selectedChord
 
-    def getDirectModKeys(self):
-        return self.directModKeys
+    def getpivotModKeys(self):
+        return self.pivotModKeys
 
-#Select chords
+#DIRECT MOD
 
-#List chords that belong in other keys
+#Select chords DONE
+
+#List keys that this chord belongs DONE
+
+#Show new key relation so its roman numeral
+
+#switch to new key
+
+#store previous key
+
+
+#Modulations to add
+
+#Step-up mod - up half a step or a step (add both options?)
+#truck driver - show the dominent chord of the key that is a step above the current key
+#Altered Common chord mod - This is when two keys share the same root note of a chord, but the quality is different.
+#Pivot Chord Mod - DONE
