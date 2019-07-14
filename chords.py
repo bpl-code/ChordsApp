@@ -104,6 +104,7 @@ class chordSelector():
         self.selectedChord = None
         self.previousKeys = []
         self.pivotModKeys = None
+        self.ParallelKey = None
 
     #usr select functions
     
@@ -112,6 +113,7 @@ class chordSelector():
         self.currentKey = self.session.circleOfFifths.keySignitures[key]
         self.selectedChord = None
         self.pivotModKeys = None
+        self.ParallelKey = None
 
     def selectChord(self,chordName):
         self.selectedChord = chordName
@@ -133,15 +135,31 @@ class chordSelector():
         for key,val in self.session.circleOfFifths.keySignitures.items():
             chords = val.chordNames
             if self.selectedChord in chords:
-        self.pivotModKeys[key] = val
-        self.pivotModKeys self.pivotModKeys  
+                self.pivotModKeys[key] = val
+
 
     def parallelMod(self):
         # Parrallel keys are major scales and a minor scales that have the same tonic
+        key = self.currentKey.keyName
+        if len(key) == 3:
+            if key[2] == 'm':
+                self.parallelKey = self.session.circleOfFifths.keySignitures[key[:1]]
+            else:
+                self.parallelKey = self.session.circleOfFifths.keySignitures[key + 'm']
+        elif len(key) == 2:
+            if key[1] == 'm':
+                self.parallelKey = self.session.circleOfFifths.keySignitures[key[0]]
+            else:
+                self.parrallelKey = self.session.circleOfFifths.keySignitures[key + 'm']
+        else:
+            self.parallelKey = self.session.circleOfFifths.keySignitures[key + 'm'] 
+
+        
         pass
 
     def truckDriverMod(self):
         #show the dominent chord of the key that is a step above the current key
+
         pass
 
     def alteredCommonMod(self):

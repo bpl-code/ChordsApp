@@ -16,11 +16,6 @@ usr.selectChord('GM')
 
 print(usr.selectedChord)
 
-usr.pivotMod()
+usr.parallelMod()
 
-for key,val in usr.pivotModKeys.items():
-    print("Key = {}  Chords = {}".format(key,val.chordSymbols))
-
-for key,val in usr.pivotModKeys.items():
-    print("Key = {}  Chords = {}".format(key,val.chordNames))
-
+print(usr.parallelKey.keyName)
